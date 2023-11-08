@@ -68,8 +68,10 @@ public class InventoryDAO {
    * @return Found Inventory.
    */
   public Optional<Inventory> retrieve(String id) {
-    // TODO
-    return Optional.empty();
+    /* Fetching the Inventory object with the passed in ID */
+    Inventory inventory = this.mongoTemplate.findById(id, Inventory.class);
+    /* return an 'Optional' wrapped Inventory if one exists */
+    return Optional.ofNullable(inventory);
   }
 
   /**
@@ -89,7 +91,11 @@ public class InventoryDAO {
    * @return Deleted Inventory.
    */
   public Optional<Inventory> delete(String id) {
-    // TODO
-    return Optional.empty();
+    /* getting the Inventory object from the database using its' ID */
+    Optional<Inventory> inventoryOpt = retrieve(id);
+    /* If the inventory was in the data base, then remove it. */
+    inventoryOpt.ifPresent(this.mongoTemplate::remove);
+    /* return the removed inventory or an empty optional if it didn't exist */
+    return inventoryOpt;
   }
 }
