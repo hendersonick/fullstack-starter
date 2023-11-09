@@ -5,6 +5,7 @@ import com.starter.fullstack.dao.InventoryDAO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,7 +52,19 @@ public class InventoryController {
     return this.inventoryDAO.create(inv);
   }
 
+  /**
+   * 
+   * @param id id.
+   * @return inventory
+   */
+  @DeleteMapping public Inventory delete(@Valid @RequestBody String id) {
+
+    /* calling the InventoryDAO delete method and removing the Inventory with ID, id, if
+     * it exists in the database and returning that removed Inventory. If there is not an 
+     * Inventory with ID, id, it will return null. 
+     */
+    return this.inventoryDAO.delete(id).orElse(null);
+   
+  }
+
 }
-
-
-
