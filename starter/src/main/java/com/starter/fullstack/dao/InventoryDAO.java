@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 /**
@@ -68,8 +70,10 @@ public class InventoryDAO {
    * @return Found Inventory.
    */
   public Optional<Inventory> retrieve(String id) {
-    // TODO
-    return Optional.empty();
+    /* Fetching the Inventory object with the passed in ID */
+    Inventory inventory = this.mongoTemplate.findById(id, Inventory.class);
+    /* return an 'Optional' wrapped Inventory if one exists */
+    return Optional.ofNullable(inventory);
   }
 
   /**
@@ -89,7 +93,11 @@ public class InventoryDAO {
    * @return Deleted Inventory.
    */
   public Optional<Inventory> delete(String id) {
-    // TODO
-    return Optional.empty();
+    /* Create the query to find the Inventory object by its ID */
+    Query query = new Query(Criteria.where("id").is(id));
+    /* Atomically find and remove the Inventory object from the database */
+    Inventory inventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
+    /* Return an 'Optional' wrapping the removed Inventory object, which will be empty if none was found */
+    return Optional.ofNullable(inventory);
   }
 }
