@@ -6,11 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
 import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableRow from '@material-ui/core/TableRow'
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Checkbox, Button} from '@material-ui/core'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -47,13 +43,17 @@ const InventoryLayout = (props) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const inventory = useSelector(state => state.inventory.all)
+  const [isCreateOpen, setCreateOpen] = useState(false)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
+
   useEffect(() => {
     if (!isFetched) {
       dispatch(inventoryDuck.findInventory())
       dispatch(productDuck.findProducts())
     }
   }, [dispatch, isFetched])
+
+  const toggleCreate = () => setCreateOpen(!isCreateOpen)
 
   const normalizedInventory = normalizeInventory(inventory)
   const [order, setOrder] = React.useState('asc')
@@ -98,9 +98,10 @@ const InventoryLayout = (props) => {
   return (
     <Grid container>
       <Grid item xs={12}>
+      <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} title='Inventory'/>
         <TableContainer component={Paper}>
-          <Table size='small' stickyHeader>
+          <Table  className={classes.table} size='small' aria-labelledby="tableTitle" stickyHeader>
             <EnhancedTableHead
               classes={classes}
               numSelected={selected.length}
@@ -140,7 +141,19 @@ const InventoryLayout = (props) => {
             </TableBody>
           </Table>
         </TableContainer>
+        </Paper>
       </Grid>
+      <Button variant="contained" color="primary" onClick={toggleCreate}>
+                Add Inventory
+            </Button>
+            <InventoryFormModal
+                title="Create"
+                formName="inventoryCreate"
+                isDialogOpen={isCreateOpen}
+                handleDialog={toggleCreate}
+                handleInventory={inventory => dispatch(inventoryDuck.saveInventory(inventory))}
+                initialValues={{}}
+            />
     </Grid>
   )
 }
