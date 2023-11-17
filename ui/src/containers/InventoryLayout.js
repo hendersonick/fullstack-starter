@@ -2,6 +2,7 @@ import * as inventoryDuck from '../ducks/inventory'
 import * as productDuck from '../ducks/products'
 import Checkbox from '@material-ui/core/Checkbox'
 import Grid from '@material-ui/core/Grid'
+import InventoryFormModal from '../components/Inventory/InventoryFormModal'
 import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
@@ -12,7 +13,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableRow from '@material-ui/core/TableRow'
 import { EnhancedTableHead, EnhancedTableToolbar, getComparator, stableSort } from '../components/Table'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
@@ -49,6 +50,8 @@ const InventoryLayout = (props) => {
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
+  const availableProducts = useSelector(state => state.products.all)
+
 
   useEffect(() => {
     if (!isFetched) {
@@ -151,14 +154,15 @@ const InventoryLayout = (props) => {
             </TableBody>
           </Table>
         </TableContainer>
-          <ProductFormModal
-            title='Create'
-            formName='inventoryCreate'
-            isDialogOpen={isCreateOpen}
-            handleDialog={toggleModals}
-            handleInventory={saveInventory}
-            initialValues={{}}
-          />
+        <InventoryFormModal
+          title='Create'
+          formName='inventoryCreate'
+          isDialogOpen={isCreateOpen}
+          handleDialog={toggleModals}
+          handleInventory={saveInventory}
+          initialValues={{}}
+          availableProducts={availableProducts}
+        />
       </Grid>
     </Grid>
   )
