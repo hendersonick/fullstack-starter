@@ -85,7 +85,7 @@ class InventoryFormModal extends React.Component {
                                 variant='contained'
                                 type='submit'
                                 form={formName}
-                                 color='secondary'
+                                color='secondary'
                                 disabled={!helpers.dirty}>
                                 Save
                               </Button>
