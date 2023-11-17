@@ -5,26 +5,14 @@ import TextField from '../Form/TextField';
 import { DatePicker } from '@material-ui/pickers';
 
 class InventoryFormModal extends React.Component {
-    state = {
-        availableProducts: [],
-        unitOfMeasurements: [
-            { value: 'CUP', label: 'Cup (c)' },
-           
-        ]
-    };
-
-    componentDidMount() {
-        // Fetch available products here
-        axios.get('/products') // Replace with actual backend endpoint
-            .then(response => {
-                this.setState({ availableProducts: response.data });
-            });
-    }
-
     render() {
-        const { formName, handleDialog, handleInventory, title, initialValues } = this.props;
-        const { availableProducts, unitOfMeasurements } = this.state;
-
+        const { formName,
+                handleDialog,
+                handleInventory,
+                title,
+                initialValues,
+                availableProducts
+              } = this.props;
         return (
             <Dialog
                 open={this.props.isDialogOpen}
@@ -36,11 +24,17 @@ class InventoryFormModal extends React.Component {
                     initialValues={initialValues}
                     onSubmit={values => {
                         handleInventory(values);
-                        handleDialog(false);
+                        handleDialog(true);
                     }}>
                     {helpers => (
-                        <Form noValidate autoComplete='off' id={formName}>
-                            <DialogTitle id='alert-dialog-title'>{`${title} Inventory`}</DialogTitle>
+                        <Form 
+                          noValidate
+                          autoComplete='off'
+                          id={formName}
+                        >
+                          <DialogTitle id='alert-dialog-title'>
+                            {`${title} Inventory`}
+                          </DialogTitle>
                             <DialogContent>
                                 <Grid container spacing={2}>
                                     {/* Name */}
@@ -85,14 +79,22 @@ class InventoryFormModal extends React.Component {
                                 </Grid>
                             </DialogContent>
                             <DialogActions>
-                                <Button onClick={() => { handleDialog(false) }} color='secondary'>Cancel</Button>
-                                <Button type='submit' variant='contained' color='primary' disabled={!helpers.dirty || !helpers.isValid}>Save</Button>
+                              <Button onClick={() => { handleDialog(false) }} color='secondary'>Cancel</Button>
+                              <Button
+                                disableElevation
+                                variant='contained'
+                                type='submit'
+                                form={formName}
+                                 color='secondary'
+                                disabled={!helpers.dirty}>
+                                Save
+                              </Button>
                             </DialogActions>
                         </Form>
                     )}
                 </Formik>
             </Dialog>
-        );
+        )
     }
 }
 
