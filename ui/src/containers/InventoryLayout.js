@@ -47,11 +47,10 @@ const headCells = [
 const InventoryLayout = (props) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
-  const availableProducts = useSelector(state => state.products.all)
-
 
   useEffect(() => {
     if (!isFetched) {
@@ -60,10 +59,17 @@ const InventoryLayout = (props) => {
     }
   }, [dispatch, isFetched])
 
-  const [isCreateOpen, setCreateOpen] = React.useState(false)
+  const availableProducts = useSelector(state => state.products.all)
+
   const normalizedInventory = normalizeInventory(inventory)
+  const [isCreateOpen, setCreateOpen] = React.useState(false)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
+  const [selected, setSelected] = React.useState([])
+
+  const toggleCreate = () => {
+    setCreateOpen(true)
+  }
 
   const toggleModals = (resetSelected) => {
     setCreateOpen(false)
@@ -71,8 +77,6 @@ const InventoryLayout = (props) => {
       setSelected([])
     }
   }
-
-  const [selected, setSelected] = React.useState([])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -107,12 +111,19 @@ const InventoryLayout = (props) => {
     setSelected(newSelected)
   }
 
+  const currentDate = new Date()
+  const formattedDate = currentDate.toISOString()
+
   const isSelected = (id) => selected.indexOf(id) !== -1
 
   return (
     <Grid container>
       <Grid item xs={12}>
-        <EnhancedTableToolbar numSelected={selected.length} title='Inventory'/>
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          title='Inventory'
+          toggleCreate={toggleCreate}
+        />
         <TableContainer component={Paper}>
           <Table size='small' stickyHeader>
             <EnhancedTableHead
@@ -140,7 +151,7 @@ const InventoryLayout = (props) => {
                       selected={isItemSelected}
                     >
                       <TableCell padding='checkbox'>
-                        <Checkbox checked={isItemSelected}/>
+                        <Checkbox checked={isItemSelected} />
                       </TableCell>
                       <TableCell padding='none'>{inv.name}</TableCell>
                       <TableCell align='right'>{inv.productType}</TableCell>
@@ -160,7 +171,16 @@ const InventoryLayout = (props) => {
           isDialogOpen={isCreateOpen}
           handleDialog={toggleModals}
           handleInventory={saveInventory}
-          initialValues={{}}
+          initialValues={{
+            name: '',
+            productType: '',
+            description: '',
+            averagePrice: 0,
+            amount: 0,
+            unitOfMeasurement: '',
+            bestBeforeDate: formattedDate,
+            neverExpires: false
+          }}
           availableProducts={availableProducts}
         />
       </Grid>
