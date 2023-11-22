@@ -1,8 +1,15 @@
+import * as Yup from 'yup'
 import { MeasurementUnits } from '../../constants/units'
 import React from 'react'
 import TextField from '../Form/TextField'
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Grid, InputAdornment, InputLabel, MenuItem, Select } from '@material-ui/core'
-import { Field, Form, Formik } from 'formik'
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Grid, InputLabel, makeStyles, MenuItem, Select } from '@material-ui/core'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  productType: Yup.string().required('Product Type is required').notOneOf([''], 'Please select a product type'),
+  unitOfMeasurement: Yup.string().required('Unit of Measurement is required').notOneOf([''], 'Please select a unit'),
+})
 
 class InventoryFormModal extends React.Component {
   render() {
@@ -30,7 +37,8 @@ class InventoryFormModal extends React.Component {
             values.bestBeforeDate = values.bestBeforeDate.toISOString()
             handleInventory(values)
             handleDialog(true)
-          }}>
+          }}
+          validationSchema={validationSchema}>
           {helpers =>
             <Form
               noValidate
@@ -49,14 +57,22 @@ class InventoryFormModal extends React.Component {
                   </Grid>
                   {/* Product Type */}
                   <Grid item xs={12}>
-                    <InputLabel htmlFor='productType'>Product Type</InputLabel>
-                    <Field name="productType" as={Select} required>
+                    <InputLabel htmlFor='productType' style={{ paddingBottom: '8px' }}>
+                      Product Type</InputLabel>
+                    <Field
+                      name="productType"
+                      as={Select}
+                      required
+                      variant="outlined"
+                      fullWidth
+                    >
                       {availableProducts.map((product) =>
                         <MenuItem key={product.id} value={product.name}>
                           {product.name}
                         </MenuItem>
                       )}
                     </Field>
+                    <ErrorMessage name="productType" component="div" className="error-message" />
                   </Grid>
                   {/* Description */}
                   <Grid item xs={12}>
@@ -74,15 +90,23 @@ class InventoryFormModal extends React.Component {
                     <Field name='amount' component={TextField} />
                   </Grid>
                   {/* Unit of Measurement */}
-                  <Grid item xs={12}>
-                    <InputLabel htmlFor='unitOfMeasurement'>Unit of Measurement</InputLabel>
-                    <Field name='unitOfMeasurement' as={Select} required>
+                  <Grid item xs={12} >
+                    <InputLabel htmlFor='unitOfMeasurement' style={{ paddingBottom: '8px' }}>
+                      Unit of Measurement</InputLabel>
+                    <Field
+                      name='unitOfMeasurement'
+                      as={Select}
+                      required
+                      variant="outlined"
+                      fullWidth
+                    >
                       {Object.entries(MeasurementUnits).map(([key, value]) =>
                         <MenuItem key={key} value={key}>
                           {value.name} ({value.abbreviation})
                         </MenuItem>
                       )}
                     </Field>
+                    <ErrorMessage name="unitOfMeasurement" component="div" className="error-message" />
                   </Grid>
                   {/* Best Before Date */}
                   <Grid item xs={12}>
