@@ -51,6 +51,7 @@ export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
       })
       dispatch(refreshInventory(invs))
       dispatch(openSuccess('Inventory removed successfully.'))
+      console.log('Remove operation completed successfully.')
     })
 )
 

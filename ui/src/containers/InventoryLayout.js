@@ -2,6 +2,7 @@ import * as inventoryDuck from '../ducks/inventory'
 import * as productDuck from '../ducks/products'
 import Checkbox from '@material-ui/core/Checkbox'
 import Grid from '@material-ui/core/Grid'
+import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
 import InventoryFormModal from '../components/Inventory/InventoryFormModal'
 import { makeStyles } from '@material-ui/core/styles'
 import { MeasurementUnits } from '../constants/units'
@@ -51,6 +52,7 @@ const InventoryLayout = (props) => {
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
+  const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
 
   useEffect(() => {
     if (!isFetched) {
@@ -63,6 +65,7 @@ const InventoryLayout = (props) => {
 
   const normalizedInventory = normalizeInventory(inventory)
   const [isCreateOpen, setCreateOpen] = React.useState(false)
+  const [isDeleteOpen, setDeleteOpen] = React.useState(false)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
   const [selected, setSelected] = React.useState([])
@@ -71,8 +74,13 @@ const InventoryLayout = (props) => {
     setCreateOpen(true)
   }
 
+  const toggleDelete = () => {
+    setDeleteOpen(true)
+  }
+
   const toggleModals = (resetSelected) => {
     setCreateOpen(false)
+    setDeleteOpen(false)
     if (resetSelected) {
       setSelected([])
     }
@@ -111,8 +119,12 @@ const InventoryLayout = (props) => {
     setSelected(newSelected)
   }
 
+  {/* const currentDate = new Date()
+  currentDate.setDate(currentDate.getDate() - 1)
+  const formattedDate = currentDate.toISOString() */}
+
   const currentDate = new Date()
-  const formattedDate = currentDate.toISOString()
+  const formattedDate = currentDate.toISOString().split('T')[0]
 
   const isSelected = (id) => selected.indexOf(id) !== -1
 
@@ -123,6 +135,7 @@ const InventoryLayout = (props) => {
           numSelected={selected.length}
           title='Inventory'
           toggleCreate={toggleCreate}
+          toggleDelete={toggleDelete}
         />
         <TableContainer component={Paper}>
           <Table size='small' stickyHeader>
@@ -182,6 +195,12 @@ const InventoryLayout = (props) => {
             neverExpires: false
           }}
           availableProducts={availableProducts}
+        />
+        <InventoryDeleteModal
+          isDialogOpen={isDeleteOpen}
+          handleDelete={removeInventory}
+          handleDialog={toggleModals}
+          initialValues={selected.map(check => check.id)}
         />
       </Grid>
     </Grid>

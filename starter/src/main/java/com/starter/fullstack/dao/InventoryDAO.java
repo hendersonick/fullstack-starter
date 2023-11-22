@@ -98,6 +98,7 @@ public class InventoryDAO {
     /* Atomically find and remove the Inventory object from the database */
     Inventory inventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
     /* Return an 'Optional' wrapping the removed Inventory object, which will be empty if none was found */
+    System.out.print("removed x1");
     return Optional.ofNullable(inventory);
   }
 }
