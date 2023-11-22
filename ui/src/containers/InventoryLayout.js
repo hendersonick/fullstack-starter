@@ -51,6 +51,7 @@ const InventoryLayout = (props) => {
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
+  const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
 
   useEffect(() => {
     if (!isFetched) {
@@ -111,8 +112,12 @@ const InventoryLayout = (props) => {
     setSelected(newSelected)
   }
 
+  {/* const currentDate = new Date()
+  currentDate.setDate(currentDate.getDate() - 1)
+  const formattedDate = currentDate.toISOString() */}
+
   const currentDate = new Date()
-  const formattedDate = currentDate.toISOString()
+  const formattedDate = currentDate.toISOString().split('T')[0]
 
   const isSelected = (id) => selected.indexOf(id) !== -1
 
