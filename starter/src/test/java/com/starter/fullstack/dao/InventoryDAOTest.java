@@ -89,6 +89,7 @@ public class InventoryDAOTest {
     Assert.assertEquals(1, this.mongoTemplate.findAll(Inventory.class).size());
 
     /* Removing the previosuly added inventory from the MongoTemplate */
+    System.out.print("lets see if its same: " + inventory.getId());
     this.inventoryDAO.delete(inventory.getId());
 
     /* Retrieving a list of all the inventory objects in the MongoTemplate (database) */

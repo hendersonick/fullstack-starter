@@ -63,7 +63,6 @@ public class InventoryController {
      * it exists in the database and returning that removed Inventory. If there is not an 
      * Inventory with ID, id, it will return null. 
      */
-    System.out.print("removed x1");
     return this.inventoryDAO.delete(id).orElse(null);
   }
 

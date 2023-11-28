@@ -95,10 +95,21 @@ public class InventoryDAO {
   public Optional<Inventory> delete(String id) {
     /* Create the query to find the Inventory object by its ID */
     Query query = new Query(Criteria.where("id").is(id));
+    
     /* Atomically find and remove the Inventory object from the database */
+    System.out.print("string we want to delete" + id);
+    System.out.print(this.mongoTemplate.findAll(Inventory.class));
+
     Inventory inventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
+
+    /* Check if the inventory is found and removed */
+    if (inventory != null) {
+      System.out.print("Deletion successful!");
+    } else {
+      System.out.print("Inventory not found or deletion unsuccessful.");
+    }
+
     /* Return an 'Optional' wrapping the removed Inventory object, which will be empty if none was found */
-    System.out.print("removed x1");
     return Optional.ofNullable(inventory);
   }
 }

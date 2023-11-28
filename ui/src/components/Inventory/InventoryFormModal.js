@@ -2,14 +2,17 @@ import * as Yup from 'yup'
 import { MeasurementUnits } from '../../constants/units'
 import React from 'react'
 import TextField from '../Form/TextField'
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Grid, InputLabel, makeStyles, MenuItem, Select } from '@material-ui/core'
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Input, InputLabel, MenuItem, Select } from '@material-ui/core'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
-  productType: Yup.string().required('Product Type is required').notOneOf([''], 'Please select a product type'),
-  unitOfMeasurement: Yup.string().required('Unit of Measurement is required').notOneOf([''], 'Please select a unit'),
+  productType: Yup.string().required('Product Type is required'),
+  unitOfMeasurement: Yup.string().required('Unit of Measurement is required'),
+  averagePrice: Yup.number().typeError('Average Price must be a number').required('Average Price is required'),
+  amount: Yup.number().typeError('Amount must be a number').required('Amount is required'),
 })
+
 
 class InventoryFormModal extends React.Component {
   render() {
@@ -72,7 +75,7 @@ class InventoryFormModal extends React.Component {
                         </MenuItem>
                       )}
                     </Field>
-                    <ErrorMessage name="productType" component="div" className="error-message" />
+                    <ErrorMessage name="productType" component="div" style={{ color: '#FF4500' }} />
                   </Grid>
                   {/* Description */}
                   <Grid item xs={12}>
@@ -82,12 +85,22 @@ class InventoryFormModal extends React.Component {
                   {/* Average Price */}
                   <Grid item xs={12}>
                     <InputLabel htmlFor='averagePrice'>Average Price</InputLabel>
-                    <Field name='averagePrice' component={TextField} />
+                    <Field
+                      name='averagePrice'
+                      component={TextField}
+                      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    />
+                    <ErrorMessage name="averagePrice" component="div" className="error-message" />
                   </Grid>
                   {/* Amount */}
                   <Grid item xs={12}>
                     <InputLabel htmlFor='amount'>Amount</InputLabel>
-                    <Field name='amount' component={TextField} />
+                    <Field
+                      name='amount'
+                      component={TextField}
+                      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    />
+                    <ErrorMessage name="amount" component="div" className="error-message" />
                   </Grid>
                   {/* Unit of Measurement */}
                   <Grid item xs={12} >
@@ -106,7 +119,7 @@ class InventoryFormModal extends React.Component {
                         </MenuItem>
                       )}
                     </Field>
-                    <ErrorMessage name="unitOfMeasurement" component="div" className="error-message" />
+                    <ErrorMessage name="unitOfMeasurement" component="div" style={{ color: '#FF4500' }} />
                   </Grid>
                   {/* Best Before Date */}
                   <Grid item xs={12}>
