@@ -61,7 +61,6 @@ export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
     for (const id of ids) {
       await axios.delete(`${config.restAPIUrl}/inventory`, { data: id })
         .then(() => console.log(`Inventory deleted successfully: ${id}`))
-        .catch((error) => console.error(`Error deleting inventory (${id}):`, error))
     }
     const remainingInventory = getState().inventory.all.filter(
       (inv) => !ids.includes(inv.id)

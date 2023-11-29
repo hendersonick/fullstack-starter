@@ -77,7 +77,6 @@ const InventoryLayout = (props) => {
 
   const toggleEdit = () => {
     setEditOpen(true)
-    console.log(normalizedInventory.find(inv => inv.id === selected[0]).id)
   }
 
   const toggleDelete = () => {
