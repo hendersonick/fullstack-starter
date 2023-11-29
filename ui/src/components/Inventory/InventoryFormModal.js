@@ -23,14 +23,15 @@ class InventoryFormModal extends React.Component {
       initialValues,
       availableProducts
     } = this.props
-    console.log('MeasurementUnits:', MeasurementUnits)
-    console.log('availableProducts:', availableProducts)
     return (
       <Dialog
         open={this.props.isDialogOpen}
         maxWidth='sm'
         fullWidth={true}
-        onClose={() => { handleDialog(false) }}
+        onClose={() => {
+          handleDialog(false)
+        }}
+
       >
         <Formik
           initialValues={initialValues}
@@ -129,7 +130,7 @@ class InventoryFormModal extends React.Component {
                   {/* Never Expires */}
                   <Grid item xs={12}>
                     <InputLabel htmlFor='neverExpires'>Does it expire?</InputLabel>
-                    <Field name='neverExpires' component={Checkbox} />
+                    <Field name='neverExpires' type='checkbox' as={Checkbox} checked={helpers.values.neverExpires} />
                   </Grid>
                 </Grid>
               </DialogContent>

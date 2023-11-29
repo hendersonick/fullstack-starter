@@ -39,11 +39,27 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
     })
 )
 
-export const removeInventory = createAction(
-  actions.INVENTORY_DELETE,
-  (ids) => async(dispatch, getState, config) => {
+{/* export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
+  (dispatch, getState, config) => {
+    const url = `${config.restAPIUrl}/inventory`
+
+    // If the inventory has an ID, it means it's an existing item, so use PUT for update
+    const axiosMethod = inventory.id ? axios.put : axios.post
+
+    return axiosMethod(url, inventory)
+      .then((suc) => {
+        const invs = getState().inventory.all.filter(inv => inv.id !== suc.data.id)
+        invs.push(suc.data)
+        dispatch(refreshInventory(invs))
+        dispatch(openSuccess('Inventory saved successfully.'))
+      })
+  }
+) */}
+
+export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
+  async(dispatch, getState, config) => {
     for (const id of ids) {
-      await axios.delete(`${config.restAPIUrl}/inventory`, { data:  id  })
+      await axios.delete(`${config.restAPIUrl}/inventory`, { data: id })
         .then(() => console.log(`Inventory deleted successfully: ${id}`))
         .catch((error) => console.error(`Error deleting inventory (${id}):`, error))
     }

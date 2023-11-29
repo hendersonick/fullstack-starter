@@ -90,8 +90,8 @@ const ProductLayout = (props) => {
           <List dense disablePadding className={classes.root}>
             {products.map((value, index) =>
               <React.Fragment key={index}>
-                <Divider/>
-                <ListItem button onClick={handleToggle(value)}>
+                <Divider />
+                <ListItem button onClick= {handleToggle(value)}>
                   <ListItemIcon>
                     <Checkbox
                       onChange={handleToggle(value)}
@@ -100,10 +100,10 @@ const ProductLayout = (props) => {
                   </ListItemIcon>
                   <ListItemAvatar>
                     <Avatar className={classes.medium}>
-                      <ImageIcon/>
+                      <ImageIcon />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={value.name}/>
+                  <ListItemText primary={value.name} />
                 </ListItem>
               </React.Fragment>
             )}
