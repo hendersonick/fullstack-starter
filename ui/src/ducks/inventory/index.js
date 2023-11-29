@@ -8,7 +8,8 @@ const actions = {
   INVENTORY_GET_ALL_PENDING: 'inventory/get_all_PENDING',
   INVENTORY_SAVE: 'inventory/save',
   INVENTORY_DELETE: 'inventory/delete',
-  INVENTORY_REFRESH: 'inventory/refresh'
+  INVENTORY_REFRESH: 'inventory/refresh',
+  INVENTORY_UPDATE: 'inventory/update'
 }
 
 export let defaultState = {
@@ -39,22 +40,21 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
     })
 )
 
-{/* export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
+export const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory) =>
   (dispatch, getState, config) => {
-    const url = `${config.restAPIUrl}/inventory`
+    const { id, ...updatedInventory } = inventory
 
-    // If the inventory has an ID, it means it's an existing item, so use PUT for update
-    const axiosMethod = inventory.id ? axios.put : axios.post
-
-    return axiosMethod(url, inventory)
-      .then((suc) => {
-        const invs = getState().inventory.all.filter(inv => inv.id !== suc.data.id)
-        invs.push(suc.data)
-        dispatch(refreshInventory(invs))
-        dispatch(openSuccess('Inventory saved successfully.'))
+    axios.delete(`${config.restAPIUrl}/inventory/`, { data: inventory.id })
+      .then(() => {
+        axios.post(`${config.restAPIUrl}/inventory`, updatedInventory)
+          .then((suc) => {
+            dispatch(refreshInventory([...getState().inventory.all.filter(inv => inv.id !== id), suc.data]))
+            dispatch(openSuccess('Inventory updated successfully.'))
+          })
       })
   }
-) */}
+)
+
 
 export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
   async(dispatch, getState, config) => {

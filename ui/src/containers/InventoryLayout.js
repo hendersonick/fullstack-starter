@@ -51,7 +51,7 @@ const InventoryLayout = (props) => {
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
-  {/* const updateInventory = useCallback(inventory => { dispatch(inventoryDuck.updateInventory(inventory)) }, [dispatch]) */}
+  const updateInventory = useCallback(inventory => { dispatch(inventoryDuck.updateInventory(inventory)) }, [dispatch])
   const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
 
   useEffect(() => {
@@ -77,6 +77,7 @@ const InventoryLayout = (props) => {
 
   const toggleEdit = () => {
     setEditOpen(true)
+    console.log(normalizedInventory.find(inv => inv.id === selected[0]).id)
   }
 
   const toggleDelete = () => {
@@ -208,10 +209,11 @@ const InventoryLayout = (props) => {
           formName='inventoryEdit'
           isDialogOpen={isEditOpen}
           handleDialog={toggleModals}
-          handleInventory={saveInventory}
+          handleInventory={updateInventory}
           initialValues={
             selected.length > 0
               ? {
+                id: normalizedInventory.find(inv => inv.id === selected[0]).id || '',
                 name: normalizedInventory.find(inv => inv.id === selected[0]).name || '',
                 productType: normalizedInventory.find(inv => inv.id === selected[0]).productType || '',
                 description: normalizedInventory.find(inv => inv.id === selected[0]).description || '',
