@@ -73,7 +73,7 @@ public class InventoryDAOTest {
 
     Assert.assertNotEquals(null, this.mongoTemplate.findAll(Inventory.class).get(0).getId()); 
 
-     Assert.assertNotEquals(ID, inventory.getId()); 
+    Assert.assertNotEquals(ID, inventory.getId()); 
   }
 
   @Test
