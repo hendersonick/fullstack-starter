@@ -1,6 +1,7 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
@@ -22,6 +23,7 @@ public class InventoryDAO {
 
   /**
    * Default Constructor.
+   * 
    * @param mongoTemplate MongoTemplate.
    */
   public InventoryDAO(MongoTemplate mongoTemplate) {
@@ -41,6 +43,7 @@ public class InventoryDAO {
 
   /**
    * Find All Inventory.
+   * 
    * @return List of found Inventory.
    */
   public List<Inventory> findAll() {
@@ -49,11 +52,12 @@ public class InventoryDAO {
 
   /**
    * Save Inventory.
+   * 
    * @param inventory Inventory to Save/Update.
    * @return Created/Updated Inventory.
    */
   public Inventory create(Inventory inventory) {
-    
+
     // Set ID to null
     inventory.setId(null);
 
@@ -66,6 +70,7 @@ public class InventoryDAO {
 
   /**
    * Retrieve Inventory.
+   * 
    * @param id Inventory id to Retrieve.
    * @return Found Inventory.
    */
@@ -78,7 +83,8 @@ public class InventoryDAO {
 
   /**
    * Update Inventory.
-   * @param id Inventory id to Update.
+   * 
+   * @param id        Inventory id to Update.
    * @param inventory Inventory to Update.
    * @return Updated Inventory.
    */
@@ -89,27 +95,24 @@ public class InventoryDAO {
 
   /**
    * Delete Inventory By Id.
-   * @param id Id of Inventory.
+   * 
+   * @param ids Id of Inventory.
    * @return Deleted Inventory.
    */
-  public Optional<Inventory> delete(String id) {
-    /* Create the query to find the Inventory object by its ID */
-    Query query = new Query(Criteria.where("id").is(id));
-    
-    /* Atomically find and remove the Inventory object from the database */
-    System.out.print("string we want to delete" + id);
-    System.out.print(this.mongoTemplate.findAll(Inventory.class));
+  public List<Inventory> delete(List<String> ids) {
 
-    Inventory inventory = this.mongoTemplate.findAndRemove(query, Inventory.class);
+    // List of Inventory objects to be returned
+    List<Inventory> invs = new ArrayList<Inventory>();
 
-    /* Check if the inventory is found and removed */
-    if (inventory != null) {
-      System.out.print("Deletion successful!");
-    } else {
-      System.out.print("Inventory not found or deletion unsuccessful.");
+    // for each ID in the passed in list, find that inventory and delete 
+    // it, but add it to the list of inventories to be returned
+    for (String id : ids) {
+      Query query = new Query(Criteria.where("id").is(id));
+
+      /* Atomically find and remove the Inventory object from the database */
+      invs.add(this.mongoTemplate.findAndRemove(query, Inventory.class));
     }
-
-    /* Return an 'Optional' wrapping the removed Inventory object, which will be empty if none was found */
-    return Optional.ofNullable(inventory);
+    // return list of deleted inventories
+    return invs;
   }
 }

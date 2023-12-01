@@ -39,20 +39,18 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
     })
 )
 
-export const removeInventory = createAction(
-  actions.INVENTORY_DELETE,
-  (ids) => async(dispatch, getState, config) => {
-    for (const id of ids) {
-      await axios.delete(`${config.restAPIUrl}/inventory`, { data:  id  })
-        .then(() => console.log(`Inventory deleted successfully: ${id}`))
-        .catch((error) => console.error(`Error deleting inventory (${id}):`, error))
-    }
-    const remainingInventory = getState().inventory.all.filter(
-      (inv) => !ids.includes(inv.id)
-    )
-    dispatch(refreshInventory(remainingInventory))
-    dispatch(openSuccess('Inventory removed successfully.'))
-  }
+export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
+  (dispatch, getState, config) => axios
+    .delete(`${config.restAPIUrl}/inventory`, { data: ids })
+    .then((suc) => {
+      const invs = []
+      getState().inventory.all.forEach(inv => {
+        if (!ids.includes(inv.id)) {
+          invs.push(inv)
+        }
+      })
+      dispatch(refreshInventory(invs))
+    })
 )
 
 export const refreshInventory = createAction(actions.INVENTORY_REFRESH, (payload) =>
