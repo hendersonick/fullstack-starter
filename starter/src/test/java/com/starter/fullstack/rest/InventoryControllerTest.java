@@ -2,6 +2,8 @@ package com.starter.fullstack.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starter.fullstack.api.Inventory;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,9 +50,9 @@ public class InventoryControllerTest {
     this.mongoTemplate.dropCollection(Inventory.class);
   }
 
-
-     /**
+  /**
    * Test create endpoint.
+   * 
    * @throws Throwable see MockMvc
    */
   @Test
@@ -63,24 +64,23 @@ public class InventoryControllerTest {
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)
         .content(this.objectMapper.writeValueAsString(this.inventory)))
-      .andExpect(status().isOk()); 
+        .andExpect(status().isOk());
 
     Assert.assertEquals(2, this.mongoTemplate.findAll(Inventory.class).size());
   }
 
-  /**
-   * Test remove endpoint.
-   * @throws Throwable see MockMvc
-   */
   @Test
-  public void Testdelete() throws Throwable {
+  public void testDelete() throws Throwable {
+    List<String> testInvs = new ArrayList<>();
+    testInvs.add(inventory.getId());
+
     this.mockMvc.perform(delete("/inventory")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(this.inventory.getId()))
-      .andExpect(status().isOk());
-    
+        .content(new ObjectMapper().writeValueAsString(testInvs)))
+        .andExpect(status().isOk());
+
     Assert.assertEquals(0, this.mongoTemplate.findAll(Inventory.class).size());
   }
-    
+
 }

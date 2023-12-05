@@ -54,16 +54,16 @@ public class InventoryController {
 
   /**
    * 
-   * @param id id.
+   * @param ids id.
    * @return inventory
    */
-  @DeleteMapping public Inventory delete(@Valid @RequestBody String id) {
+  @DeleteMapping public List<Inventory> delete(@RequestBody List<String> ids) {
 
-    /* calling the InventoryDAO delete method and removing the Inventory with ID, id, if
-     * it exists in the database and returning that removed Inventory. If there is not an 
-     * Inventory with ID, id, it will return null. 
+    /* calling the InventoryDAO delete method and removing each inventory in the database
+     * based on the list of ids we are passed. Then, returning all the removed removed 
+     * Inventory objects.
      */
-    return this.inventoryDAO.delete(id).orElse(null);
+    return this.inventoryDAO.delete(ids);
   }
 
 }

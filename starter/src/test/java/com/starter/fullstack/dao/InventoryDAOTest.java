@@ -1,6 +1,7 @@
 package com.starter.fullstack.dao;
 
 import com.starter.fullstack.api.Inventory;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import org.junit.After;
@@ -88,9 +89,13 @@ public class InventoryDAOTest {
     /* Assuring that the inventory was sucessfully added to the Mongo Template */
     Assert.assertEquals(1, this.mongoTemplate.findAll(Inventory.class).size());
 
+    List<String> testInvs = new ArrayList<>();
+    testInvs.add(inventory.getId());
+
+ 
+
     /* Removing the previosuly added inventory from the MongoTemplate */
-    System.out.print("lets see if its same: " + inventory.getId());
-    this.inventoryDAO.delete(inventory.getId());
+    this.inventoryDAO.delete(testInvs);
 
     /* Retrieving a list of all the inventory objects in the MongoTemplate (database) */
     List<Inventory> actualInventory = this.inventoryDAO.findAll();
