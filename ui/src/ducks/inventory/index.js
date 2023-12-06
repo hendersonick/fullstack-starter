@@ -8,7 +8,8 @@ const actions = {
   INVENTORY_GET_ALL_PENDING: 'inventory/get_all_PENDING',
   INVENTORY_SAVE: 'inventory/save',
   INVENTORY_DELETE: 'inventory/delete',
-  INVENTORY_REFRESH: 'inventory/refresh'
+  INVENTORY_REFRESH: 'inventory/refresh',
+  INVENTORY_UPDATE: 'inventory/update'
 }
 
 export let defaultState = {
@@ -39,18 +40,34 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
     })
 )
 
-export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
-  (dispatch, getState, config) => axios
-    .delete(`${config.restAPIUrl}/inventory`, { data: ids })
-    .then((suc) => {
-      const invs = []
-      getState().inventory.all.forEach(inv => {
-        if (!ids.includes(inv.id)) {
-          invs.push(inv)
-        }
+export const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory) =>
+  (dispatch, getState, config) => {
+    const { id, ...updatedInventory } = inventory
+
+    axios.delete(`${config.restAPIUrl}/inventory/`, { data: inventory.id })
+      .then(() => {
+        axios.post(`${config.restAPIUrl}/inventory`, updatedInventory)
+          .then((suc) => {
+            dispatch(refreshInventory([...getState().inventory.all.filter(inv => inv.id !== id), suc.data]))
+            dispatch(openSuccess('Inventory updated successfully.'))
+          })
       })
-      dispatch(refreshInventory(invs))
-    })
+  }
+)
+
+
+export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
+  async(dispatch, getState, config) => {
+    for (const id of ids) {
+      await axios.delete(`${config.restAPIUrl}/inventory`, { data: id })
+        .then(() => console.log(`Inventory deleted successfully: ${id}`))
+    }
+    const remainingInventory = getState().inventory.all.filter(
+      (inv) => !ids.includes(inv.id)
+    )
+    dispatch(refreshInventory(remainingInventory))
+    dispatch(openSuccess('Inventory removed successfully.'))
+  }
 )
 
 export const refreshInventory = createAction(actions.INVENTORY_REFRESH, (payload) =>
