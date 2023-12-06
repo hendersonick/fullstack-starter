@@ -8,7 +8,8 @@ const actions = {
   INVENTORY_GET_ALL_PENDING: 'inventory/get_all_PENDING',
   INVENTORY_SAVE: 'inventory/save',
   INVENTORY_DELETE: 'inventory/delete',
-  INVENTORY_REFRESH: 'inventory/refresh'
+  INVENTORY_REFRESH: 'inventory/refresh',
+  INVENTORY_UPDATE: 'inventory/update'
 }
 
 export let defaultState = {
@@ -39,6 +40,36 @@ export const saveInventory = createAction(actions.INVENTORY_SAVE, (inventory) =>
     })
 )
 
+export const updateInventory = createAction(actions.INVENTORY_UPDATE, (inventory) =>
+  (dispatch, getState, config) => {
+    const { id, ...updatedInventory } = inventory
+
+    axios.delete(`${config.restAPIUrl}/inventory/`, { data: [id] })
+      .then(() => {
+        const invs = []
+        getState().inventory.all.forEach(inv => {
+          if (!id.includes(inv.id)) {
+            invs.push(inv)
+          }
+        })
+        dispatch(refreshInventory(invs))
+        axios.post(`${config.restAPIUrl}/inventory`, updatedInventory)
+          .then((suc) => {
+            const invs = []
+            getState().inventory.all.forEach(inv => {
+              if (inv.id !== suc.data.id) {
+                invs.push(inv)
+              }
+            })
+            invs.push(suc.data)
+            dispatch(refreshInventory(invs))
+            dispatch(openSuccess('Inventory updated successfully.'))
+          })
+      })
+  }
+)
+
+
 export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
   (dispatch, getState, config) => axios
     .delete(`${config.restAPIUrl}/inventory`, { data: ids })
@@ -50,6 +81,7 @@ export const removeInventory = createAction(actions.INVENTORY_DELETE, (ids) =>
         }
       })
       dispatch(refreshInventory(invs))
+      dispatch(openSuccess('Inventory removed successfully.'))
     })
 )
 

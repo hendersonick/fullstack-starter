@@ -5,7 +5,6 @@ import Grid from '@material-ui/core/Grid'
 import InventoryDeleteModal from '../components/Inventory/InventoryDeleteModal'
 import InventoryFormModal from '../components/Inventory/InventoryFormModal'
 import { makeStyles } from '@material-ui/core/styles'
-import { MeasurementUnits } from '../constants/units'
 import moment from 'moment'
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
@@ -32,8 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 const normalizeInventory = (inventory) => inventory.map(inv => ({
   ...inv,
-  unitOfMeasurement: MeasurementUnits[inv.unitOfMeasurement].name,
-  bestBeforeDate: moment(inv.bestBeforeDate).format('MM/DD/YYYY')
+  bestBeforeDate: moment(inv.bestBeforeDate).format('YYYY-MM-DD'),
 }))
 
 const headCells = [
@@ -52,6 +50,7 @@ const InventoryLayout = (props) => {
   const inventory = useSelector(state => state.inventory.all)
   const isFetched = useSelector(state => state.inventory.fetched && state.products.fetched)
   const saveInventory = useCallback(inventory => { dispatch(inventoryDuck.saveInventory(inventory)) }, [dispatch])
+  const updateInventory = useCallback(inventory => { dispatch(inventoryDuck.updateInventory(inventory)) }, [dispatch])
   const removeInventory = useCallback(ids => { dispatch(inventoryDuck.removeInventory(ids)) }, [dispatch])
 
   useEffect(() => {
@@ -65,6 +64,7 @@ const InventoryLayout = (props) => {
 
   const normalizedInventory = normalizeInventory(inventory)
   const [isCreateOpen, setCreateOpen] = React.useState(false)
+  const [isEditOpen, setEditOpen] = React.useState(false)
   const [isDeleteOpen, setDeleteOpen] = React.useState(false)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
@@ -74,6 +74,10 @@ const InventoryLayout = (props) => {
     setCreateOpen(true)
   }
 
+  const toggleEdit = () => {
+    setEditOpen(true)
+  }
+
   const toggleDelete = () => {
     setDeleteOpen(true)
   }
@@ -81,6 +85,7 @@ const InventoryLayout = (props) => {
   const toggleModals = (resetSelected) => {
     setCreateOpen(false)
     setDeleteOpen(false)
+    setEditOpen(false)
     if (resetSelected) {
       setSelected([])
     }
@@ -119,10 +124,6 @@ const InventoryLayout = (props) => {
     setSelected(newSelected)
   }
 
-  {/* const currentDate = new Date()
-  currentDate.setDate(currentDate.getDate() - 1)
-  const formattedDate = currentDate.toISOString() */}
-
   const currentDate = new Date()
   const formattedDate = currentDate.toISOString().split('T')[0]
 
@@ -136,6 +137,7 @@ const InventoryLayout = (props) => {
           title='Inventory'
           toggleCreate={toggleCreate}
           toggleDelete={toggleDelete}
+          toggleEdit={toggleEdit}
         />
         <TableContainer component={Paper}>
           <Table size='small' stickyHeader>
@@ -194,6 +196,29 @@ const InventoryLayout = (props) => {
             bestBeforeDate: formattedDate,
             neverExpires: false
           }}
+          availableProducts={availableProducts}
+        />
+        <InventoryFormModal
+          title='Edit'
+          formName='inventoryEdit'
+          isDialogOpen={isEditOpen}
+          handleDialog={toggleModals}
+          handleInventory={updateInventory}
+          initialValues={
+            selected.length > 0
+              ? {
+                id: normalizedInventory.find(inv => inv.id === selected[0]).id || '',
+                name: normalizedInventory.find(inv => inv.id === selected[0]).name || '',
+                productType: normalizedInventory.find(inv => inv.id === selected[0]).productType || '',
+                description: normalizedInventory.find(inv => inv.id === selected[0]).description || '',
+                averagePrice: normalizedInventory.find(inv => inv.id === selected[0]).averagePrice || 0,
+                amount: normalizedInventory.find(inv => inv.id === selected[0]).amount || 0,
+                unitOfMeasurement: normalizedInventory.find(inv => inv.id === selected[0]).unitOfMeasurement || '',
+                bestBeforeDate: moment(normalizedInventory.find(inv => inv.id === selected[0]).bestBeforeDate).format('YYYY-MM-DD') || '',
+                neverExpires: normalizedInventory.find(inv => inv.id === selected[0]).neverExpires || false,
+              }
+              : null
+          }
           availableProducts={availableProducts}
         />
         <InventoryDeleteModal

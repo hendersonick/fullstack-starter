@@ -23,14 +23,15 @@ class InventoryFormModal extends React.Component {
       initialValues,
       availableProducts
     } = this.props
-    console.log('MeasurementUnits:', MeasurementUnits)
-    console.log('availableProducts:', availableProducts)
     return (
       <Dialog
         open={this.props.isDialogOpen}
         maxWidth='sm'
         fullWidth={true}
-        onClose={() => { handleDialog(false) }}
+        onClose={() => {
+          handleDialog(false)
+        }}
+
       >
         <Formik
           initialValues={initialValues}
@@ -56,7 +57,7 @@ class InventoryFormModal extends React.Component {
                   {/* Name */}
                   <Grid item xs={12} sm={12}>
                     <InputLabel htmlFor='name'>Name</InputLabel>
-                    <Field name='name' component={TextField} style={{ width: '100%' }} required />
+                    <Field name='name' component={TextField} required />
                   </Grid>
                   {/* Product Type */}
                   <Grid item xs={12}>
@@ -80,7 +81,7 @@ class InventoryFormModal extends React.Component {
                   {/* Description */}
                   <Grid item xs={12}>
                     <InputLabel htmlFor='description'>Description</InputLabel>
-                    <Field name='description' component={TextField} style={{ width: '100%' }} />
+                    <Field name='description' component={TextField} />
                   </Grid>
                   {/* Average Price */}
                   <Grid item xs={12}>
@@ -89,7 +90,6 @@ class InventoryFormModal extends React.Component {
                       name='averagePrice'
                       component={TextField}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      style={{ width: '100%' }}
                     />
                     <ErrorMessage name="averagePrice" component="div" className="error-message" />
                   </Grid>
@@ -100,7 +100,6 @@ class InventoryFormModal extends React.Component {
                       name='amount'
                       component={TextField}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      style={{ width: '100%' }}
                     />
                     <ErrorMessage name="amount" component="div" className="error-message" />
                   </Grid>
@@ -126,7 +125,7 @@ class InventoryFormModal extends React.Component {
                   {/* Best Before Date */}
                   <Grid item xs={12}>
                     <InputLabel htmlFor='bestBeforeDate'>Best Before Date</InputLabel>
-                    <Field name='bestBeforeDate' component={TextField} type='date' style={{ width: '100%' }} />
+                    <Field name='bestBeforeDate' component={TextField} type='date' />
                   </Grid>
                   {/* Never Expires */}
                   <Grid item xs={12}>
